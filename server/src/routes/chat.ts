@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
-import { geminiService } from '../services/gemini';
+import { chatService } from '../services/ai/chat';
+import { createSSEStream } from '../utils/sse';
 
 const router = new Hono();
 
@@ -21,49 +22,19 @@ router.post('/', async (c) => {
     return c.json({ error: 'message or messages are required' }, 400);
   }
 
-  const encoder = new TextEncoder();
+  return createSSEStream(async (send) => {
+    const { answer, sourceSentence } = await chatService.chatStream(
+      chatMessages,
+      pageContent,
+      (token) => send({ type: 'token', text: token }),
+      computeSourceSentence !== false,
+    );
 
-  const stream = new ReadableStream({
-    start(controller) {
-      const send = (payload: any) => {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
-      };
-
-      (async () => {
-        try {
-          const result = await geminiService.chatStream(
-            chatMessages,
-            pageContent,
-            (token) => send({ type: 'token', text: token }),
-            computeSourceSentence !== false,
-          );
-
-          send({
-            type: 'final',
-            answer: result.answer,
-            sourceSentence: result.sourceSentence,
-          });
-        } catch (error: any) {
-          console.error('Chat stream error:', error);
-          send({
-            type: 'final',
-            answer: 'Sorry, I encountered an error while processing your request.',
-            sourceSentence: null,
-          });
-        } finally {
-          controller.close();
-        }
-      })();
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream; charset=utf-8',
-      'Cache-Control': 'no-cache, no-transform',
-      Connection: 'keep-alive',
-      'X-Accel-Buffering': 'no',
-    },
+    send({
+      type: 'final',
+      answer,
+      sourceSentence,
+    });
   });
 });
 

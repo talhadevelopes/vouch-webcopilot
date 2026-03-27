@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { geminiService } from '../services/gemini';
+import { analyzeService } from '../services/ai/analyze';
 import { cacheService } from '../services/cache';
 
 const router = new Hono();
@@ -22,13 +22,13 @@ router.post('/', async (c) => {
   }
 
   try {
-    const analysisData = await geminiService.analyzeLanguage(pageContent);
+    const analysis = await analyzeService.analyzeLanguage(pageContent);
     
     if (cacheKey) {
-      await cacheService.set(cacheKey, analysisData);
+      await cacheService.set(cacheKey, analysis);
     }
 
-    return c.json(analysisData);
+    return c.json(analysis);
   } catch (error: any) {
     console.error('Analysis error:', error);
     return c.json({ error: error.message }, 500);

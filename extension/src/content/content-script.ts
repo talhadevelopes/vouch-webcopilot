@@ -34,11 +34,9 @@ function getTextFromSelectors(selectors: string[]) {
 }
 
 async function init() {
-  console.log("[Vouch Content] Script loaded and initializing");
 
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === "HIGHLIGHT_TEXT") {
-      console.log("[Vouch Content] Highlighting text:", message.text);
       highlightText(message.text);
     }
   });
@@ -104,7 +102,6 @@ async function init() {
     chosenText = bodyText;
     chosenWordCount = bodyWordCount;
   } else {
-    // Prefer selectors, but if body has more text, use body to maximize total words.
     if (bodyWordCount > selectorsWordCount) {
       extractionMethod = "bodyInnerText";
       chosenText = bodyText;
@@ -136,23 +133,12 @@ async function init() {
     extractionMethod,
   };
 
-  console.log("[Vouch Content] Extracted page data:", {
-    extractionMethod,
-    isArticle,
-    wordCount: pageData.wordCount,
-    readabilityWordCount,
-    selectorsWordCount,
-    bodyWordCount,
-  });
-
   chrome.runtime.sendMessage({ type: "PAGE_EXTRACTED", payload: pageData }, () => {
     if (chrome.runtime.lastError) {
       console.error(
-        "[Vouch Content] Error sending PAGE_EXTRACTED to SW:",
+        "[Vouch Content] Error sending PAGE_EXTRACTED:",
         chrome.runtime.lastError,
       );
-    } else {
-      console.log("[Vouch Content] PAGE_EXTRACTED sent successfully");
     }
   });
 
@@ -162,9 +148,7 @@ async function init() {
 }
 
 if (document.readyState === "complete") {
-  console.log("[Vouch Content] Document already complete, running init");
   init();
 } else {
-  console.log("[Vouch Content] Waiting for window load event");
   window.addEventListener("load", init);
 }

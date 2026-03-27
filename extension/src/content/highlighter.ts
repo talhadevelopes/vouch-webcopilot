@@ -44,16 +44,12 @@ export function highlightText(textToHighlight: string) {
     let score = 0;
 
     if (contentNorm.includes(targetNorm)) {
-      // Strong match: exact-ish normalized content appears in this node.
       score = 1_000 + targetNorm.length;
     } else {
       score = countTokenOverlap(targetNorm, contentNorm);
     }
 
     if (score <= bestScore) continue;
-
-    // Choose an approximate window inside this text node:
-    // find the first occurrence of any normalized token.
     const lowerContent = content.toLowerCase();
     let startIndex = -1;
     for (const tok of targetTokens) {
@@ -64,8 +60,6 @@ export function highlightText(textToHighlight: string) {
         break;
       }
     }
-
-    // If token-based matching fails (punctuation differences), fallback to a coarse guess.
     if (startIndex === -1) startIndex = Math.max(0, content.length / 2 - textToHighlight.length / 2);
 
     const endIndex = Math.min(content.length, startIndex + textToHighlight.length);
@@ -112,7 +106,7 @@ export function highlightText(textToHighlight: string) {
         parent.insertBefore(span.firstChild, span);
       }
       parent.removeChild(span);
-      parent.normalize(); // Clean up text nodes
+      parent.normalize();
     }, 1000);
-  }, 5000);
+  }, 50000);
 }

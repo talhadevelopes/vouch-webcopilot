@@ -1,16 +1,28 @@
 import { Hono } from 'hono';
 import { stream } from 'hono/streaming';
-import { geminiService } from '../services/gemini';
+import { verifyService } from '../services/ai/verify';
 import { cacheService } from '../services/cache';
+import { createSSEStream } from '../utils/sse';
 
 const router = new Hono();
 
 router.post('/', async (c) => {
-  const { pageContent, pageUrl, claim } = await c.req.json();
+  const { pageContent, pageUrl, claim, streamResponse } = await c.req.json();
 
-  // Support verifying a single claim (used by "Vouch this").
+  // Streaming single claim verification (used by "Vouch this")
+  if (typeof claim === 'string' && claim.trim().length > 0 && streamResponse) {
+    return createSSEStream(async (send) => {
+      const fullText = await verifyService.verifyClaimStream(
+        claim.trim(),
+        (token) => send({ type: 'token', text: token }),
+      );
+      send({ type: 'final', text: fullText });
+    });
+  }
+
+  // Non-streaming single claim
   if (typeof claim === 'string' && claim.trim().length > 0) {
-    const result = await geminiService.verifyClaim(claim.trim());
+    const result = await verifyService.verifyClaim(claim.trim());
     return stream(c, async (s) => {
       await s.write(JSON.stringify(result) + '\n');
     });
@@ -35,26 +47,14 @@ router.post('/', async (c) => {
     }
   }
 
+  // Scan — single Gemini call that extracts and verifies in one shot
   return stream(c, async (s) => {
-    try {
-      const claims = await geminiService.extractClaims(pageContent);
-      const allResults: any[] = [];
-      
-      const verificationPromises = claims.map(async (claim) => {
-        const result = await geminiService.verifyClaim(claim);
-        allResults.push(result);
-        await s.write(JSON.stringify(result) + '\n');
-        return result;
-      });
-
-      await Promise.all(verificationPromises);
-
-      if (cacheKey && allResults.length > 0) {
-        await cacheService.set(cacheKey, allResults);
-      }
-    } catch (error: any) {
-      console.error('Verification error:', error);
-      await s.write(JSON.stringify({ error: error.message }) + '\n');
+    const results = await verifyService.extractAndVerifyClaims(pageContent);
+    for (const result of results) {
+      await s.write(JSON.stringify(result) + '\n');
+    }
+    if (cacheKey && results.length > 0) {
+      await cacheService.set(cacheKey, results);
     }
   });
 });

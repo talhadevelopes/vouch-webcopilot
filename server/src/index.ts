@@ -33,4 +33,5 @@ console.log(`Vouch server running on port ${env.PORT}`);
 export default {
   port: env.PORT,
   fetch: app.fetch,
+  idleTimeout: 120,
 };

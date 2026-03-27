@@ -1,0 +1,135 @@
+/* =============================================
+   chat.css — Message bubbles, input bar
+   ============================================= */
+
+/* ---- Chat wrapper ---- */
+.v-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- Message list ---- */
+.v-chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.v-chat-empty {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-size: 0.9rem;
+}
+
+/* ---- Message row ---- */
+.v-msg-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 90%;
+}
+
+.v-msg-row.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.v-msg-row.vouch {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+/* ---- Bubble ---- */
+.v-bubble {
+  padding: 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.v-bubble.user {
+  background: #dc2626;
+  color: #ffffff;
+  border-top-right-radius: 0;
+}
+
+.v-bubble.vouch {
+  background: #f3f4f6;
+  color: #1f2937;
+  border-top-left-radius: 0;
+}
+
+/* ---- Source highlight indicator ---- */
+.v-source-indicator {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 900;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 5px;
+}
+
+/* ---- Timestamp ---- */
+.v-msg-time {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 4px;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+/* ---- Input bar ---- */
+.v-chat-input-bar {
+  padding: 16px;
+  border-top: 1px solid #f3f4f6;
+  background-color: #ffffff;
+}
+
+.v-chat-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.v-chat-input {
+  width: 100%;
+  background-color: #f3f4f6;
+  border-radius: 16px;
+  padding: 12px 48px 12px 16px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+.v-chat-send-btn {
+  position: absolute;
+  right: 8px;
+  padding: 8px;
+  background-color: #dc2626;
+  color: #ffffff;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.v-chat-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

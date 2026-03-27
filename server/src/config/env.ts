@@ -6,7 +6,6 @@ export const env = {
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || '',
 };
 
-// Validation
 const required = [
   'GEMINI_API_KEY',
   'UPSTASH_REDIS_REST_URL',

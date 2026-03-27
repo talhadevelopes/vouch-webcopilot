@@ -20,20 +20,17 @@ function shouldOpenSidePanel(tabId: number) {
 function autoOpenSidePanel(tabId?: number) {
   if (!tabId) return;
   if (!shouldOpenSidePanel(tabId)) return;
-  // Try-catch because chrome.sidePanel APIs can be restricted depending on browser/user gesture.
   try {
     if (currentActiveTabId === tabId) {
       chrome.sidePanel.open({ tabId });
     }
   } catch (e) {
-    // Avoid crashing the service worker.
     console.warn("Failed to auto-open side panel:", e);
   }
 }
 
 chrome.action.onClicked.addListener((tab) => {
   if (!tab.id) return;
-  // Keep this in sync with what the sidebar represents.
   currentActiveTabId = tab.id;
   chrome.sidePanel.open({ tabId: tab.id });
   chrome.scripting.executeScript({
@@ -64,7 +61,6 @@ function reinjectContentScript(tabId?: number) {
 chrome.tabs.onActivated.addListener((activeInfo) => {
   currentActiveTabId = activeInfo.tabId;
   reinjectContentScript(activeInfo.tabId);
-
   autoOpenSidePanel(activeInfo.tabId);
 });
 
@@ -82,7 +78,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const tabId = sender.tab?.id;
     if (tabId) {
       chrome.storage.session.set({ [`page_data_${tabId}`]: message.payload });
-      // Notify the side panel only when the extracted tab is the currently active one.
       if (currentActiveTabId === tabId || currentActiveTabId === null) {
         chrome.runtime.sendMessage({
           type: "DATA_READY",
