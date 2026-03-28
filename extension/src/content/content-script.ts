@@ -59,7 +59,6 @@ async function init() {
       readabilityWordCount = countWords(readabilityText);
     }
   } catch (err) {
-    console.warn("[Vouch Content] Readability failed:", err);
   }
 
   // 2) If Readability returns < 500 words, fall back to generic selectors.
