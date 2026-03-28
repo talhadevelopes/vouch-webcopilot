@@ -2,7 +2,7 @@
 
 **🌐 Live Demo:** [https://vouch-copilot.vercel.app](https://vouch-copilot.vercel.app)
 
-Vouch is a Chrome extension that acts as your intelligent AI copilot while you read articles online. It doesn't just check facts — it serves as a full conversational assistant that can summarize pages, answer specific questions about what you are reading, and analyze the content for bias and manipulation.
+Vouch is a Chrome extension that acts as your intelligent AI copilot while you read articles online. It doesn't just check facts, it serves as a full conversational assistant that can summarize pages, answer specific questions about what you are reading, and analyze the content for bias and manipulation.
 
 ## The Problem
 When reading news today, it is hard to instantly know if a claim is accurate, if the author is using manipulative language to sway your opinion, or to quickly find specific answers buried in long pieces. Most readers don't have the time to manually search every claim or read thousands of words to get the gist.
