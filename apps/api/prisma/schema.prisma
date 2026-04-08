@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id
+  email        String        @unique
+  name         String
+  passwordHash String        @map("password_hash")
+  authProvider String        @default("local") @map("auth_provider")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  refreshToken RefreshToken?
+  analyses     Analysis[]
+  otpCodes     OtpCode[]
+  extensionLinkCodes ExtensionLinkCode[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  userId    String   @id @map("user_id")
+  token     String
+  updatedAt DateTime @default(now()) @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Analysis {
+  id        String   @id
+  userId    String   @map("user_id")
+  inputUrl  String   @map("input_url")
+  aiResponse String? @map("ai_response")
+  proof     String?
+  biasScore Int?     @map("bias_score")
+  shareId   String?  @unique @map("share_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("analyses")
+}
+
+model OtpCode {
+  id        String   @id
+  email     String
+  code      String
+  expiresAt DateTime @map("expires_at")
+  consumedAt DateTime? @map("consumed_at")
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email, createdAt(sort: Desc)])
+  @@map("otp_codes")
+}
+
+model ExtensionLinkCode {
+  id         String    @id
+  code       String    @unique
+  userId     String    @map("user_id")
+  expiresAt  DateTime  @map("expires_at")
+  consumedAt DateTime? @map("consumed_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("extension_link_codes")
+}

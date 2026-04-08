@@ -1,0 +1,31 @@
+{
+  "name": "@vouch/web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vouch/sdk": "workspace:*",
+    "@vouch/types": "workspace:*",
+    "@react-oauth/google": "^0.12.1",
+    "@tanstack/react-query": "^5.75.7",
+    "framer-motion": "^11.11.17",
+    "lucide-react": "^0.511.0",
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.3",
+    "recharts": "^2.15.3",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "typescript": "^5.8.3"
+  }
+}
