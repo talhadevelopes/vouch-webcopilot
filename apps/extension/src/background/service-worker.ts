@@ -7,15 +7,6 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 let currentActiveTabId: number | null = null;
-const lastSidePanelOpenAt = new Map<number, number>();
-
-function shouldOpenSidePanel(tabId: number) {
-  const now = Date.now();
-  const last = lastSidePanelOpenAt.get(tabId) || 0;
-  if (now - last < 2500) return false;
-  lastSidePanelOpenAt.set(tabId, now);
-  return true;
-}
 
 function autoOpenSidePanel(tabId?: number) {
   // sidePanel.open() can only be called from user gesture (click/context menu).

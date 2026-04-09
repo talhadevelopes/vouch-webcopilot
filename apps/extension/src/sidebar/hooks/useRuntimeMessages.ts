@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import type { PageData } from "../types";
-import { parseSidebarRuntimeMessage } from "../../shared/runtime-messages";
+import type { PageData } from "../utils/types";
+import { parseSidebarRuntimeMessage } from "../../utils/runtime-messages";
 
 type UseRuntimeMessagesParams = {
   onSelectedClaim: (text: string) => void;

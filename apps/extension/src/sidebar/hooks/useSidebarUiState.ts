@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { Tab } from "../types";
-import { DEFAULT_TAB } from "../constants";
+import type { Tab } from "../utils/types";
+import { DEFAULT_TAB } from "../utils/constants";
 
 export function useSidebarUiState() {
   const [activeTab, setActiveTab] = useState<Tab>(DEFAULT_TAB);

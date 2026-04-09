@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../types';
+import type { ChatMessage } from '../utils/types';
 
 export const HISTORY_TTL_MS = 48 * 60 * 60 * 1000; // 48 hours
 

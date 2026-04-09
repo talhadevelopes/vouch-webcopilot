@@ -19,3 +19,9 @@ export type AnalysisResult = {
   opinionAsFact: { sentence: string; reason: string }[];
   overallTone: string;
 };
+
+export type GoogleTokenInfo = {
+  email?: string;
+  name?: string;
+  aud?: string;
+};

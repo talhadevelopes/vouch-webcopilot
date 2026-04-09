@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { renderMarkdown } from './Markdown';
-import type { ChatMessage, StreamEvent } from '../types';
+import type { ChatMessage, StreamEvent } from '../utils/types';
 import { authFetch } from '../../lib/api';
-import { sendRuntimeMessage } from '../../shared/runtime-messages';
+import { sendRuntimeMessage } from '../../utils/runtime-messages';
 
 interface ChatPanelProps {
   pageContent: string;

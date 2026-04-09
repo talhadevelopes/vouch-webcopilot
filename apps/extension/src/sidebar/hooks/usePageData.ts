@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { loadHistory } from './useHistory';
-import type { PageData, ChatMessage } from '../types';
-import { requestPageData } from '../../shared/runtime-messages';
+import type { PageData, ChatMessage } from '../utils/types';
+import { requestPageData } from '../../utils/runtime-messages';
 
 export function usePageData() {
   const [data, setData] = useState<PageData | null>(null);

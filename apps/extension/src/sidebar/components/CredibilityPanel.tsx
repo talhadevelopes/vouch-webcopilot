@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClaimCard } from './ClaimCard';
-import type { VerificationResult } from '../types';
+import type { VerificationResult } from '../utils/types';
 
 interface CredibilityPanelProps {
   claims: VerificationResult[];

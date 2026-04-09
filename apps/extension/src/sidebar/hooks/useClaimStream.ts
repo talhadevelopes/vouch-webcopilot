@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { authFetch } from '../../lib/api';
-import type { StreamEvent } from '../types';
+import type { StreamEvent } from '../utils/types';
 
 export function useClaimStream() {
   const [selectedClaimText, setSelectedClaimText] = useState('');

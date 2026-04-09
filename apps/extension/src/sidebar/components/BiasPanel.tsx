@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AnalysisResult } from '../types';
+import type { AnalysisResult } from '../utils/types';
 import { highlightOnPage } from '../utils/highlight';
 
 interface BiasPanelProps {

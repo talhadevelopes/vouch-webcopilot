@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
-import { env } from './config/env';
+import { env } from './utils/env';
 
 // Routes
 import verifyRouter from './routes/verify';

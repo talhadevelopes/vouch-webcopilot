@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { env } from '../../config/env';
+import { env } from '../../utils/env';
 
 export const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 export const MODEL_NAME = 'gemini-2.5-flash';

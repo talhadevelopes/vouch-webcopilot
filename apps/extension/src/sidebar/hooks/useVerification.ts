@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { verifyPage, analyzePage, authFetch } from '../../lib/api';
-import type { VerificationResult, AnalysisResult } from '../types';
+import type { VerificationResult, AnalysisResult } from '../utils/types';
 
 export function useVerification() {
   const [claims, setClaims] = useState<VerificationResult[]>([]);

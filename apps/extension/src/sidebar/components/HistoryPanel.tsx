@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ChatMessage } from '../types';
+import type { ChatMessage } from '../utils/types';
 import { HISTORY_TTL_MS } from '../hooks/useHistory';
 
 interface HistoryEntry {

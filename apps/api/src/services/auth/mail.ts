@@ -1,4 +1,4 @@
-import { env } from "../../config/env";
+import { env } from "../../utils/env";
 
 export async function sendOtpEmail(email: string, code: string) {
   if (!env.MAILJET_API_KEY || !env.MAILJET_API_SECRET || !env.MAILJET_FROM_EMAIL) {

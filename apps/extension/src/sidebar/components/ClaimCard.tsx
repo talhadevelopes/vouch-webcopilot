@@ -1,5 +1,5 @@
 import React from 'react';
-import type { VerificationResult } from '../types';
+import type { VerificationResult } from '../utils/types';
 import { highlightOnPage } from '../utils/highlight';
 
 interface ClaimCardProps {

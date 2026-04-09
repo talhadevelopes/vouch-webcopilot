@@ -1,4 +1,4 @@
-import type { PageData } from "../sidebar/types";
+import type { PageData } from "../sidebar/utils/types";
 
 export type VouchSelectedClaimMessage = {
   type: "VOUCH_SELECTED_CLAIM";
