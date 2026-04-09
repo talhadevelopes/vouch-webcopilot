@@ -9,6 +9,7 @@ router.post("/login", AuthController.login);
 router.post("/google", AuthController.googleLogin);
 router.post("/otp/request", AuthController.requestOtp);
 router.post("/otp/verify", AuthController.verifyOtp);
+router.post("/set-password", requireAuth, AuthController.setPassword);
 router.post("/extension/link-code", requireAuth, AuthController.createExtensionLinkCode);
 router.post("/extension/link-code/exchange", AuthController.exchangeExtensionLinkCode);
 router.post("/demo-login", AuthController.demoLogin);

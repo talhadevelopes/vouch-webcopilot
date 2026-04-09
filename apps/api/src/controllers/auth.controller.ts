@@ -11,6 +11,7 @@ import {
   otpVerifySchema,
   refreshSchema,
   registerSchema,
+  setPasswordSchema,
 } from "../validators/auth.validator";
 import { env } from "../config/env";
 import { sendOtpEmail } from "../services/auth/mail";
@@ -165,7 +166,7 @@ export class AuthController {
     }
 
     const verifyRes = await fetch(
-      `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(parsed.data.idToken)}`,
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${encodeURIComponent(parsed.data.accessToken)}`,
     );
     if (!verifyRes.ok) {
       return ApiResponse.error(c, "Invalid Google token", "UNAUTHORIZED", 401);
@@ -174,9 +175,6 @@ export class AuthController {
     const tokenInfo = (await verifyRes.json()) as GoogleTokenInfo;
     if (!tokenInfo.email) {
       return ApiResponse.error(c, "Google account email is missing", "UNAUTHORIZED", 401);
-    }
-    if (env.GOOGLE_CLIENT_ID && tokenInfo.aud !== env.GOOGLE_CLIENT_ID) {
-      return ApiResponse.error(c, "Google token audience mismatch", "UNAUTHORIZED", 401);
     }
 
     const email = tokenInfo.email.toLowerCase();
@@ -244,6 +242,7 @@ export class AuthController {
 
     const email = parsed.data.email.toLowerCase();
     const code = parsed.data.code;
+    const name = parsed.data.name?.trim();
 
     const otp = await prisma.otpCode.findFirst({
       where: {
@@ -266,11 +265,18 @@ export class AuthController {
         data: {
           id: `usr_${crypto.randomUUID()}`,
           email,
-          name: email.split("@")[0] || "OTP User",
+          name: name || email.split("@")[0] || "OTP User",
           passwordHash: await hashPassword(`otp_${crypto.randomUUID()}`),
           authProvider: "otp",
         },
       }));
+
+    if (existing && name && existing.name !== name) {
+      await prisma.user.update({
+        where: { id: existing.id },
+        data: { name },
+      });
+    }
 
     await prisma.otpCode.update({
       where: { id: otp.id },
@@ -285,9 +291,29 @@ export class AuthController {
     });
   }
 
+  static async setPassword(c: Context) {
+    const userId = c.get("userId");
+    const parsed = setPasswordSchema.safeParse(await c.req.json());
+    if (!parsed.success) {
+      return ApiResponse.error(c, "Invalid request body", "VALIDATION_ERROR", 400, parsed.error.flatten());
+    }
+
+    const { password } = parsed.data;
+    const passwordHash = await hashPassword(password);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
+
+    return ApiResponse.success(c, "Password updated successfully", { ok: true });
+  }
+
   static async createExtensionLinkCode(c: Context) {
     const userId = c.get("userId");
     const now = new Date();
+
+    // Look for a valid existing code first
     const existing = await prisma.extensionLinkCode.findFirst({
       where: {
         userId,
@@ -305,7 +331,7 @@ export class AuthController {
     }
 
     const code = `${Math.floor(100000 + Math.random() * 900000)}`;
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     await prisma.extensionLinkCode.create({
       data: {
         id: `xlc_${crypto.randomUUID()}`,

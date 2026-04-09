@@ -22,8 +22,10 @@ export function AppProviders({ children }: { children: any }) {
   );
 
   const content = <QueryClientProvider client={queryClient}>{children as any}</QueryClientProvider>;
-  if (!googleClientId) {
-    return content;
-  }
-  return <SafeGoogleOAuthProvider clientId={googleClientId}>{content}</SafeGoogleOAuthProvider>;
+
+  return (
+    <SafeGoogleOAuthProvider clientId={googleClientId || "build-time-placeholder"}>
+      {content}
+    </SafeGoogleOAuthProvider>
+  );
 }

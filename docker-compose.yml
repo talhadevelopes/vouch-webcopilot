@@ -8,7 +8,7 @@ services:
     env_file:
       - ./apps/api/.env
     ports:
-      - "8787:8787"
+      - "4000:4000"
     restart: unless-stopped
 
   vouch-web:
@@ -16,15 +16,15 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8787}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
     image: talhadevelopes/vouch-web:${TAG:-latest}
     container_name: vouch-web
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8787}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
     depends_on:
       - vouch-server
     ports:
-      - "3000:3000"
+      - "4000:4000"
     restart: unless-stopped

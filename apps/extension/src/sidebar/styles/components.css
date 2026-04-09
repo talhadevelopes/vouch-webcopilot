@@ -198,7 +198,42 @@
 }
 
 .v-toggle.active .v-toggle-knob {
-  left: 34px;
+  left: 36px;
+}
+
+/* ---- Connection Required ---- */
+.v-connection-required {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 20px;
+  margin: 20px 0;
+}
+
+.v-connection-required-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.v-connection-required-title {
+  font-weight: 900;
+  font-size: 18px;
+  color: #111827;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.v-connection-required-text {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 700;
+  line-height: 1.5;
+  margin-bottom: 24px;
 }
 
 .v-btn-primary {

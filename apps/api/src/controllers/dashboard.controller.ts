@@ -20,10 +20,10 @@ export class DashboardController {
     if (!parsed.success) {
       return ApiResponse.error(c, "Invalid request body", "VALIDATION_ERROR", 400, parsed.error.flatten());
     }
-    const { inputUrl } = parsed.data;
+    const { inputUrl, content } = parsed.data;
 
     const simulated = await analyzeService.analyzeLanguage(
-      `Analyze source url: ${inputUrl}. Provide concise bias assessment.`,
+      content ? `Content: ${content}` : `Analyze source url: ${inputUrl}. Provide concise bias assessment.`,
     );
 
     const item = await prisma.analysis.create({

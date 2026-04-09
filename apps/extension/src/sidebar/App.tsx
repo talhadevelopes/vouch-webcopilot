@@ -13,8 +13,12 @@ import type { Tab, ChatMessage } from './types';
 import { DEFAULT_TAB, TAB_LABEL } from './constants';
 import { useSidebarUiState } from './hooks/useSidebarUiState';
 import { useRuntimeMessages } from './hooks/useRuntimeMessages';
+import { useExtensionAuth } from './hooks/useExtensionAuth';
 
 export default function App() {
+  const { authState } = useExtensionAuth();
+  const isConnected = authState === "Connected";
+
   const {
     data, loading, restoredMessages, setRestoredMessages,
     chatKey, setChatKey, pageLoadIdRef, applyPageData,
@@ -135,6 +139,19 @@ export default function App() {
 
   const contentClass = showSettings || activeTab !== DEFAULT_TAB ? 'v-content' : 'v-content-noscroll';
 
+  const ConnectionRequired = ({ feature }: { feature: string }) => (
+    <div className="v-connection-required">
+      <div className="v-connection-required-icon">🔒</div>
+      <h3 className="v-connection-required-title">{feature} is locked</h3>
+      <p className="v-connection-required-text">
+        Please connect your account in settings to use this feature.
+      </p>
+      <button onClick={toggleSettings} className="v-btn-primary">
+        Go to Settings
+      </button>
+    </div>
+  );
+
   return (
     <div className="v-container">
       {/* Header */}
@@ -193,6 +210,8 @@ export default function App() {
               setActiveTab(DEFAULT_TAB);
             }}
           />
+        ) : !isConnected ? (
+          <ConnectionRequired feature="Vouch Copilot" />
         ) : (
           <>
             {/* Facts tab */}

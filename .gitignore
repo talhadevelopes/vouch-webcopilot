@@ -5,3 +5,5 @@ node_modules
 .turbo
 .next
 dist
+USE_DASHBOARD_ID.txt
+USE_SHARE.txt

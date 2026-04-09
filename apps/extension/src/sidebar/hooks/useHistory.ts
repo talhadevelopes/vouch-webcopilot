@@ -1,6 +1,6 @@
 import type { ChatMessage } from '../types';
 
-export const HISTORY_TTL_MS = 72 * 60 * 60 * 1000; // 72 hours
+export const HISTORY_TTL_MS = 48 * 60 * 60 * 1000; // 48 hours
 
 function historyKey(url: string): string {
   return `vouch_history_${url}`;

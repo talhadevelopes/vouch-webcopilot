@@ -22,15 +22,6 @@ function timeAgo(ms: number): string {
   return 'just now';
 }
 
-function expiresIn(savedAt: number): string {
-  const remaining = HISTORY_TTL_MS - (Date.now() - savedAt);
-  const h = Math.floor(remaining / (1000 * 60 * 60));
-  const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-  if (h > 0) return `Expires in ${h}h ${m}m`;
-  if (m > 0) return `Expires in ${m}m`;
-  return 'Expiring soon';
-}
-
 export const HistoryPanel: React.FC<HistoryPanelProps> = ({ onSelectEntry }) => {
   const [entries, setEntries] = React.useState<HistoryEntry[]>([]);
 
@@ -64,7 +55,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ onSelectEntry }) => 
       <div className="v-history-empty">
         <p style={{ marginBottom: 8 }}>No history yet.</p>
         <p style={{ margin: 0, fontSize: 11 }}>
-          Chat on any article and it will appear here for 72 hours.
+          Chat on any article and it will appear here.
         </p>
       </div>
     );
@@ -84,12 +75,11 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ onSelectEntry }) => 
             </div>
             <div className="v-history-item-meta">
               <span>{entry.messages.filter((m) => m.sender === 'user').length} messages · {timeAgo(entry.savedAt)}</span>
-              <span className="v-history-item-expiry">{expiresIn(entry.savedAt)}</span>
             </div>
           </div>
         ))}
       </div>
-      <p className="v-history-notice">⏱ Conversations are kept for 72 hours only</p>
+      <p className="v-history-notice">⏱ Conversations are kept in your history.</p>
     </div>
   );
 };

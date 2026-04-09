@@ -9,10 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vouch/sdk": "workspace:*",
-    "@vouch/types": "workspace:*",
     "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^5.75.7",
+    "@vouch/sdk": "workspace:*",
+    "@vouch/types": "workspace:*",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.511.0",
     "next": "^15.3.0",
@@ -26,6 +26,9 @@
     "@types/node": "^22.14.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
   }
 }

@@ -1,6 +1,6 @@
 import { createApiClient, createBrowserAuthStorage } from "@vouch/sdk";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const authStorage = createBrowserAuthStorage("vouch");
 const client = createApiClient(API_URL, authStorage);
 

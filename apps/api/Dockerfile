@@ -10,6 +10,6 @@ RUN bunx prisma generate
 
 COPY src ./src
 
-EXPOSE 8787
+EXPOSE 4000
 
 CMD ["bun", "src/index.ts"]

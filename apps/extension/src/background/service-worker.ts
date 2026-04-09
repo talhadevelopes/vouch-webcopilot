@@ -18,15 +18,9 @@ function shouldOpenSidePanel(tabId: number) {
 }
 
 function autoOpenSidePanel(tabId?: number) {
-  if (!tabId) return;
-  if (!shouldOpenSidePanel(tabId)) return;
-  try {
-    if (currentActiveTabId === tabId) {
-      chrome.sidePanel.open({ tabId });
-    }
-  } catch (e) {
-    console.warn("Failed to auto-open side panel:", e);
-  }
+  // sidePanel.open() can only be called from user gesture (click/context menu).
+  // Auto-opening on tab activation/update is not supported by Chrome and causes errors.
+  return;
 }
 
 chrome.action.onClicked.addListener((tab) => {

@@ -1,7 +1,7 @@
 import { createApiClient, createBrowserAuthStorage } from "@vouch/sdk";
 import type { AnalysisResult, VerificationResult } from "../sidebar/types";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8787";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const authStorage = createBrowserAuthStorage("vouch");
 const client = createApiClient(API_URL, authStorage);
 

@@ -1,125 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   color-scheme: light;
 }
 
-* {
-  box-sizing: border-box;
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('https://cdn.fontshare.com/wf/J6PPRPKWXDUIYA47IXLEQB4R4OPVYDQH/N2ZXAXWEHVMLISD2TIXJC7EF4GOY43L4/NXM4Z4TDCMYWBZ7AVI2N6DQ5VMWNENMU.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('https://cdn.fontshare.com/wf/CKQBK2QBTCDREE7L3MXZ3PPW7LDNJCWU/OTOY7FQFSFOJVZKJWKO2EHUJLOGBDN4Q/4CO2ETY7NITKLUDKMYJ75RHJSPHOJ7XT.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('https://cdn.fontshare.com/wf/XMXWOHABYLQDJ42L65EFRYNVRY37HQCB/B2O4O6V3JMFM2WDCYQI3A47L5U4THDUL/WN5274VQ3AUBDFP74GB4EC4XYJ3EKVNE.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('https://cdn.fontshare.com/wf/ZX6AQLSFYVDPN2URWO2MQFGTYYOHIS64/TPYPKOYWFQVNJHLLRXD4KFYX4LUOUW4Z/6QH2ALVTTK7IRVO5MYOQQ3OZNXW5SSS3.woff2') format('woff2');
+  font-weight: 800;
+  font-display: swap;
+  font-style: normal;
 }
 
 body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background: #f7f8fa;
-  color: #111827;
+  @apply bg-white text-gray-900 font-sans;
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: inherit;
+/* Base styles for the "Vouch" feel */
+.text-red {
+  @apply text-vouch-red;
 }
 
-.container {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 24px;
+.bg-red {
+  @apply bg-vouch-red;
 }
 
-.card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 22px rgba(17, 24, 39, 0.04);
+/* Custom Scrollbar for ticker etc */
+.ticker-track::-webkit-scrollbar {
+  display: none;
+}
+.ticker-track {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 600;
-  cursor: pointer;
+/* Animation utilities for the redesign */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.btn-primary {
-  background: #dc2626;
-  color: #fff;
+.animate-ticker {
+  animation: ticker 22s linear infinite;
 }
 
-.btn-ghost {
-  background: #f3f4f6;
-  color: #111827;
-}
-
-.input {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-}
-
-.grid {
-  display: grid;
-  gap: 16px;
-}
-
-.button-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.error-text {
-  color: #dc2626;
-  font-size: 14px;
-  margin: 0;
-}
-
-.muted-text {
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.dashboard-grid {
-  grid-template-columns: 1fr;
-}
-
-.history-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.history-list li {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 10px 12px;
-  display: grid;
-  gap: 4px;
-}
-
-.history-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.history-list span {
-  color: #6b7280;
-  font-size: 13px;
-}
-
-.chart-wrap {
-  width: 100%;
-  height: 240px;
-}
-
-@media (min-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.animate-ticker:hover {
+  animation-play-state: paused;
 }

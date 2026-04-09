@@ -17,34 +17,50 @@ export function usePageData() {
     setRestoredMessages(history);
     setData(payload);
     setLoading(false);
-    setChatKey((k) => k + 1);
+    // Don't reset chatKey here if it's the same URL to prevent UI reset
   };
 
   // Tab switch: re-fetch from session storage
   useEffect(() => {
     const onTabActivated = async () => {
-      pageLoadIdRef.current++;
-      setData(null);
-      setLoading(true);
-      setRestoredMessages([]);
-      setChatKey((k) => k + 1);
-
       const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
       if (!tab?.id) { setLoading(false); return; }
 
-      let attempts = 0;
-      const tryFetch = async () => {
-        const response = await loadPageData(tab.id!);
-        if (response) {
-          await applyPageData(response);
-        } else if (attempts < 8) {
-          attempts++;
-          setTimeout(tryFetch, 500);
-        } else {
-          setLoading(false);
-        }
-      };
-      tryFetch();
+      const response = await loadPageData(tab.id!);
+      if (response) {
+        // Only reset state if the URL actually changed
+        setData((prev) => {
+          if (prev?.url === response.url) {
+            setLoading(false);
+            return prev;
+          }
+          pageLoadIdRef.current++;
+          setRestoredMessages([]);
+          setChatKey((k) => k + 1);
+          applyPageData(response);
+          return response;
+        });
+      } else {
+        // If no data for this tab, show loading then fallback
+        setData(null);
+        setLoading(true);
+        setRestoredMessages([]);
+        setChatKey((k) => k + 1);
+        
+        let attempts = 0;
+        const tryFetch = async () => {
+          const res = await loadPageData(tab.id!);
+          if (res) {
+            await applyPageData(res);
+          } else if (attempts < 8) {
+            attempts++;
+            setTimeout(tryFetch, 500);
+          } else {
+            setLoading(false);
+          }
+        };
+        tryFetch();
+      }
     };
 
     chrome.tabs.onActivated.addListener(onTabActivated);
