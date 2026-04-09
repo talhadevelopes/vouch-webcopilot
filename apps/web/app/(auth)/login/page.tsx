@@ -69,6 +69,19 @@ export default function VouchLogin() {
     },
   });
 
+  const demoLoginMutation = useMutation({
+    mutationFn: async () =>
+      apiFetch<LoginResponse>("/auth/demo-login", {
+        method: "POST",
+      }),
+    onSuccess: (data) => {
+      setUser(data.user);
+      setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+      setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+      router.push("/dashboard");
+    },
+  });
+
   const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       googleMutation.mutate(tokenResponse.access_token);
@@ -85,8 +98,11 @@ export default function VouchLogin() {
     }
   };
 
-  const loading = loginMutation.isPending || otpRequestMutation.isPending || googleMutation.isPending;
-  const error = (loginMutation.error as Error | null)?.message || (otpRequestMutation.error as Error | null)?.message || (googleMutation.error as Error | null)?.message;
+  const loading = loginMutation.isPending || otpRequestMutation.isPending || googleMutation.isPending || demoLoginMutation.isPending;
+  const error = (loginMutation.error as Error | null)?.message || 
+                (otpRequestMutation.error as Error | null)?.message || 
+                (googleMutation.error as Error | null)?.message || 
+                (demoLoginMutation.error as Error | null)?.message;
 
   return (
     <div style={{ minHeight:"100vh", width:"100%", display:"flex", fontFamily:"'Cabinet Grotesk', sans-serif", background:"#ffffff", overflow:"hidden" }}>
@@ -426,6 +442,23 @@ export default function VouchLogin() {
                   <>Sign in <ArrowRight size={16}/></>
                 )}
               </button>
+
+              <button 
+                type="button" 
+                onClick={() => demoLoginMutation.mutate()}
+                disabled={loading} 
+                className="vl-goog" 
+                style={{
+                  width:"100%", display:"flex", alignItems:"center",
+                  justifyContent:"center", gap:"8px",
+                  background:"#ffffff", border:"1.5px solid #dc2626",
+                  borderRadius:"12px", padding:"13px 20px",
+                  color:"#dc2626", fontWeight:800, fontSize:"14px",
+                  marginTop: "12px", cursor: loading ? "not-allowed" : "pointer",
+                  opacity: loading ? 0.7 : 1, fontFamily:"inherit"
+                }}>
+                <Sparkles size={16} /> Continue as Demo user
+              </button>
             </div>
           </form>
 
@@ -438,18 +471,6 @@ export default function VouchLogin() {
               No account?{" "}
               <Link href="/register" className="vl-lnk" style={{ color:"#111827", fontWeight:700, textDecoration:"none" }}>Create one free →</Link>
             </p>
-          </div>
-
-          {/* Chrome CTA */}
-          <div className="vl5" style={{ marginTop:"10px" }}>
-            <a href="#" className="vl-chrome" style={{
-              display:"flex", alignItems:"center", justifyContent:"center",
-              gap:"8px", background:"#f9fafb", border:"1px solid #e5e7eb",
-              borderRadius:"11px", padding:"11px 16px",
-              color:"#6b7280", fontSize:"12px", fontWeight:600, textDecoration:"none"
-            }}>
-              <Chrome size={13}/> Install Chrome Extension — Free
-            </a>
           </div>
 
           {error && (

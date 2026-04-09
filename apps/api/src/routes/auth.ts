@@ -1,20 +1,23 @@
 import { Hono } from "hono";
 import { requireAuth, type AuthContext } from "../middleware/auth";
-import { AuthController } from "../controllers/auth.controller";
+import { CoreAuthController } from "../controllers/auth/core.controller";
+import { SocialAuthController } from "../controllers/auth/social.controller";
+import { OTPController } from "../controllers/auth/otp.controller";
+import { ExtensionAuthController } from "../controllers/auth/extension.controller";
 
 const router = new Hono<AuthContext>();
-
-router.post("/register", AuthController.register);
-router.post("/login", AuthController.login);
-router.post("/google", AuthController.googleLogin);
-router.post("/otp/request", AuthController.requestOtp);
-router.post("/otp/verify", AuthController.verifyOtp);
-router.post("/set-password", requireAuth, AuthController.setPassword);
-router.post("/extension/link-code", requireAuth, AuthController.createExtensionLinkCode);
-router.post("/extension/link-code/exchange", AuthController.exchangeExtensionLinkCode);
-router.post("/demo-login", AuthController.demoLogin);
-router.post("/refresh", AuthController.refresh);
-router.get("/me", requireAuth, AuthController.me);
-router.post("/logout", requireAuth, AuthController.logout);
+        
+router.post("/register", CoreAuthController.register);
+router.post("/login", CoreAuthController.login);
+router.post("/google", SocialAuthController.googleLogin);
+router.post("/otp/request", OTPController.requestOtp);
+router.post("/otp/verify", OTPController.verifyOtp);
+router.post("/set-password", requireAuth, OTPController.setPassword);
+router.post("/extension/link-code", requireAuth, ExtensionAuthController.createExtensionLinkCode);
+router.post("/extension/link-code/exchange", ExtensionAuthController.exchangeExtensionLinkCode);
+router.post("/demo-login", CoreAuthController.demoLogin);
+router.post("/refresh", CoreAuthController.refresh);
+router.get("/me", requireAuth, CoreAuthController.me);
+router.post("/logout", requireAuth, CoreAuthController.logout);
 
 export default router;
