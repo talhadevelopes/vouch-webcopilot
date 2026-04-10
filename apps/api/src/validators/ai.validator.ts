@@ -25,3 +25,8 @@ export const chatSchema = z.object({
     .optional(),
   computeSourceSentence: z.boolean().optional(),
 });
+
+export const scanSchema = z.object({
+  pageContent: z.string().min(20),
+  pageUrl: z.string().url().optional(),
+});

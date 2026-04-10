@@ -118,9 +118,12 @@ Format your response as:
         }
       }
     } catch (e: any) {
-      console.error('[Vouch] verifyClaimStream failed:', e);
+      console.error('[Vouch] verifyClaimStream grounded attempt failed:', e);
+      
+      // If the grounded stream fails (common in preview models with tools), 
+      // we immediately fallback to a clean non-grounded stream.
       if (!answer) {
-        // Fallback: try without grounding
+        console.log('[Vouch] Falling back to non-grounded stream for reliability...');
         const fallbackModel = genAI.getGenerativeModel({ model: MODEL_NAME });
         try {
           const streamResult = await withRetry(() => fallbackModel.generateContentStream(prompt));
@@ -132,6 +135,7 @@ Format your response as:
             }
           }
         } catch (e2: any) {
+          console.error('[Vouch] Fallback stream also failed:', e2);
           const errorMsg = getErrorMessage(e2);
           onToken?.(errorMsg);
           return errorMsg;

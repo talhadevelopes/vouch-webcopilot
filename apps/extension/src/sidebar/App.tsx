@@ -14,6 +14,7 @@ import { DEFAULT_TAB, TAB_LABEL } from './utils/constants';
 import { useSidebarUiState } from './hooks/useSidebarUiState';
 import { useRuntimeMessages } from './hooks/useRuntimeMessages';
 import { useExtensionAuth } from './hooks/useExtensionAuth';
+import { authFetch } from '../lib/api';
 
 export default function App() {
   const { authState } = useExtensionAuth();
@@ -27,7 +28,7 @@ export default function App() {
   const {
     claims, isVerifying, analysis, isAnalyzing,
     verifyEnabled, setVerifyEnabled, startVerification,
-    startAnalysis, handleVerifyToggle, reset: resetVerification,
+    startAnalysis, startFullScan, handleVerifyToggle, reset: resetVerification,
   } = useVerification();
 
   const {
@@ -87,15 +88,14 @@ export default function App() {
     if (data?.url) saveHistory(data.url, data.title, messages);
   };
 
-  // Scan page: run verify + bias together
+  // Scan page: One click, one single request to the backend
   const refreshVerification = async () => {
     if (!data?.textContent || !verifyEnabled) return;
     const loadId = ++pageLoadIdRef.current;
     setActiveTab('facts');
-    await Promise.all([
-      startVerification(data.textContent, data.url, loadId, pageLoadIdRef),
-      startAnalysis(data.textContent, data.url, loadId, pageLoadIdRef),
-    ]);
+    
+    // The backend now handles both verification and bias in a single call
+    await startFullScan(data.textContent, data.url, loadId, pageLoadIdRef);
   };
 
   // Toggle verification and close settings

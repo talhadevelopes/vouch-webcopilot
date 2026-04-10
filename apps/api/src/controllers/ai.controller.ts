@@ -6,9 +6,34 @@ import { verifyService } from "../services/ai/verify";
 import { cacheService } from "../services/cache";
 import { createSSEStream } from "../utils/sse";
 import { ApiResponse } from "../utils/api-response";
-import { analyzeSchema, chatSchema, verifySchema } from "../validators/ai.validator";
+import { analyzeSchema, chatSchema, scanSchema, verifySchema } from "../validators/ai.validator";
 
 export class AIController {
+  static async scan(c: Context) {
+    const parsed = scanSchema.safeParse(await c.req.json());
+    if (!parsed.success) {
+      return ApiResponse.error(c, "Invalid request body", "VALIDATION_ERROR", 400, parsed.error.flatten());
+    }
+    const { pageContent, pageUrl } = parsed.data;
+
+    try {
+      // Run BOTH in parallel on the backend - we have higher server-side quotas/timeouts usually
+      // and it's much more efficient than the extension doing 2 round trips.
+      const [claims, analysis] = await Promise.all([
+        verifyService.extractAndVerifyClaims(pageContent),
+        analyzeService.analyzeLanguage(pageContent)
+      ]);
+
+      return ApiResponse.success(c, "Scan completed", {
+        claims,
+        analysis
+      });
+    } catch (error: any) {
+      console.error("[Vouch] Full scan failed:", error);
+      return ApiResponse.error(c, error?.message || "Scan failed", "SCAN_ERROR", 500);
+    }
+  }
+
   static async analyze(c: Context) {
     const parsed = analyzeSchema.safeParse(await c.req.json());
     if (!parsed.success) {

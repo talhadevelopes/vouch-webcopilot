@@ -45,6 +45,17 @@ export const analyzePage = async (pageContent: string, pageUrl: string) => {
   return { data };
 };
 
+export const scanFullPage = async (pageContent: string, pageUrl: string) => {
+  const data = await client.apiFetch<{
+    claims: VerificationResult[];
+    analysis: AnalysisResult;
+  }>("/scan", {
+    method: "POST",
+    body: { pageContent, pageUrl },
+  });
+  return { data };
+};
+
 export async function authFetch(path: string, init: RequestInit = {}) {
   const accessToken = authStorage.getAccessToken();
   const refreshToken = authStorage.getRefreshToken();

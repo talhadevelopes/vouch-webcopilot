@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { verifyPage, analyzePage, authFetch } from '../../lib/api';
+import { verifyPage, analyzePage, scanFullPage, authFetch } from '../../lib/api';
 import type { VerificationResult, AnalysisResult } from '../utils/types';
 
 export function useVerification() {
@@ -10,15 +10,47 @@ export function useVerification() {
   const [verifyEnabled, setVerifyEnabled] = useState(false);
   const verifyEnabledRef = useRef(false);
 
+  const startFullScan = async (content: string, url: string, loadId: number, pageLoadIdRef: React.MutableRefObject<number>) => {
+    setIsVerifying(true);
+    setIsAnalyzing(true);
+    setClaims([]);
+    setAnalysis(null);
+
+    try {
+      const { data } = await scanFullPage(content, url);
+      
+      if (pageLoadIdRef.current !== loadId) return;
+
+      const { claims: scanClaims, analysis: scanAnalysis } = data;
+      
+      setClaims(scanClaims || []);
+      setAnalysis(scanAnalysis || null);
+
+      // Sync to dashboard with the pre-calculated results
+      authFetch('/dashboard/analysis', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          inputUrl: url, 
+          content,
+          aiResponse: scanAnalysis?.overallTone,
+          proof: scanAnalysis?.manipulativeLanguage?.[0]?.reason,
+          biasScore: scanAnalysis?.biasScore
+        })
+      }).catch(err => console.error('Failed to sync extension scan to dashboard:', err));
+
+    } catch (error) {
+      console.error('Full scan failed:', error);
+    } finally {
+      if (pageLoadIdRef.current === loadId) {
+        setIsVerifying(false);
+        setIsAnalyzing(false);
+      }
+    }
+  };
+
   const startVerification = async (content: string, url: string, loadId: number, pageLoadIdRef: React.MutableRefObject<number>) => {
     setIsVerifying(true);
     setClaims([]);
-    
-    // Trigger permanent history save on Dashboard
-    authFetch('/dashboard/analysis', {
-      method: 'POST',
-      body: JSON.stringify({ inputUrl: url, content })
-    }).catch(err => console.error('Failed to sync extension scan to dashboard:', err));
 
     try {
       const { data } = await verifyPage(content, url);
@@ -97,5 +129,6 @@ export function useVerification() {
     startAnalysis,
     handleVerifyToggle,
     reset,
+    startFullScan,
   };
 }

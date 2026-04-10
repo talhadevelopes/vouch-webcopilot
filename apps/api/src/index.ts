@@ -7,6 +7,7 @@ import { env } from './utils/env';
 import verifyRouter from './routes/verify';
 import analyzeRouter from './routes/analyze';
 import chatRouter from './routes/chat';
+import scanRouter from './routes/scan';
 import authRouter from './routes/auth';
 import dashboardRouter from './routes/dashboard';
 import publicRouter from './routes/public';
@@ -39,6 +40,7 @@ app.get('/health', (c) => {
 app.route('/verify', verifyRouter);
 app.route('/analyze', analyzeRouter);
 app.route('/chat', chatRouter);
+app.route('/scan', scanRouter);
 app.route('/auth', authRouter);
 app.route('/dashboard', dashboardRouter);
 app.route('/public', publicRouter);

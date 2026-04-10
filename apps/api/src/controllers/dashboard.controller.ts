@@ -20,20 +20,30 @@ export class DashboardController {
     if (!parsed.success) {
       return ApiResponse.error(c, "Invalid request body", "VALIDATION_ERROR", 400, parsed.error.flatten());
     }
-    const { inputUrl, content } = parsed.data;
+    const { inputUrl, content, aiResponse, proof, biasScore } = parsed.data;
 
-    const simulated = await analyzeService.analyzeLanguage(
-      content ? `Content: ${content}` : `Analyze source url: ${inputUrl}. Provide concise bias assessment.`,
-    );
+    let finalAiResponse = aiResponse;
+    let finalProof = proof;
+    let finalBiasScore = biasScore;
+
+    // If no AI data is provided, only THEN run the AI analyze service
+    if (!aiResponse && !biasScore) {
+      const simulated = await analyzeService.analyzeLanguage(
+        content ? `Content: ${content}` : `Analyze source url: ${inputUrl}. Provide concise bias assessment.`,
+      );
+      finalAiResponse = simulated.overallTone ?? undefined;
+      finalProof = simulated.manipulativeLanguage[0]?.reason ?? undefined;
+      finalBiasScore = Number.isFinite(simulated.biasScore) ? simulated.biasScore : undefined;
+    }
 
     const item = await prisma.analysis.create({
       data: {
         id: `anl_${crypto.randomUUID()}`,
         userId,
         inputUrl,
-        aiResponse: simulated.overallTone ?? null,
-        proof: simulated.manipulativeLanguage[0]?.reason ?? null,
-        biasScore: Number.isFinite(simulated.biasScore) ? simulated.biasScore : null,
+        aiResponse: finalAiResponse ?? null,
+        proof: finalProof ?? null,
+        biasScore: finalBiasScore ?? null,
       },
     });
 
